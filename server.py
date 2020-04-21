@@ -9,12 +9,13 @@ connection = False
 status = ""
 while connection != True:
     data,ip = socket.recvfrom(1024)
-    if(data.decode(encoding="utf-8").strip() == "a1"):
-        reply = "a2"
+    if(data.decode(encoding="utf-8").strip() == "A1"):
+        reply = "A2"
         reply=reply.encode()
         socket.sendto(reply,ip)
-    elif (data.decode(encoding="utf-8").strip() == "b1"):
+    elif (data.decode(encoding="utf-8").strip() == "B1"):
         connection = True
+        print("handshake done, ready to receive mssgs")
     
 
 while 1:
