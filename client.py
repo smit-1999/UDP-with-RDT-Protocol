@@ -16,7 +16,7 @@ while 1:
 
     try:
         # send the message
-        socket.sendto(message, ("127.0.0.1", 9999))
+        socket.sendto(message, ("192.168.0.107", 9999))
 
         # output the response (if any)
         data, ip = socket.recvfrom(1024)
