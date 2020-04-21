@@ -3,6 +3,19 @@ import socket
 # set up the socket using local address
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 socket.bind(("", 9999))
+print(f"server started on localhost at port 9999")
+
+connection = False
+status = ""
+while connection != True:
+    data,ip = socket.recvfrom(1024)
+    if(data.decode(encoding="utf-8").strip() == "a1"):
+        reply = "a2"
+        reply=reply.encode()
+        socket.sendto(reply,ip)
+    elif (data.decode(encoding="utf-8").strip() == "b1"):
+        connection = True
+    
 
 while 1:
 

@@ -8,10 +8,11 @@ SERVER_PORT = 5000
 
 
 def main():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    
     address = (SERVER_ADDRES, SERVER_PORT)
     conn1 = ThreeWayHandshake()
-    #print("before", conn1)
+    
     sock.connect(address)
     conn1.Connection()
     while conn1.connected != True:
@@ -27,7 +28,7 @@ def main():
         print("client side after response:", conn1)
         conn1.Connection()
         sleep(3)
-
+    print(sock.getsockname())
     print("done.") if conn1.connected == True else print("not done")
     while 1:
         message = input("> ")
