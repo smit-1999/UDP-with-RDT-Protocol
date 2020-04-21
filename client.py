@@ -8,6 +8,19 @@ except socket.error:
     print("Oops, something went wrong connecting the socket")
     exit()
 
+connection = False
+while connection != True:
+    msg = "A1"
+    msg = msg.encode()
+    socket.sendto(msg, ("127.0.0.1", 9999))
+    data,ip = socket.recvfrom(1024)
+    if(data.decode(encoding="utf-8").strip() == "A2"):
+        msg = "B1"
+        msg=msg.encode()
+        socket.sendto(msg, ("127.0.0.1", 9999))
+        connection = True
+        print("handshake done, you can send mssgs")
+
 while 1:
     message = input("> ")
     print('input',message)
@@ -16,7 +29,7 @@ while 1:
 
     try:
         # send the message
-        socket.sendto(message, ("192.168.0.107", 9999))
+        socket.sendto(message, ("127.0.0.1", 9999))
 
         # output the response (if any)
         data, ip = socket.recvfrom(1024)

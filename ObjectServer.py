@@ -3,14 +3,12 @@ import pickle
 from twh import ThreeWayHandshake
 # from gc import enable
 from time import sleep
-SERVER_ADDRESS = "127.0.0.1"
+SERVER_ADDRESS = ""
 SERVER_PORT = 5000
 hanler = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 address = (SERVER_ADDRESS, SERVER_PORT)
 print(f"server {SERVER_ADDRESS} at port {SERVER_PORT}")
 hanler.bind(address)
-# hanler.listen(1)
-
 
 def main():
     # con = (hanler.accept()[0])
@@ -24,8 +22,7 @@ def main():
         con.sendall(pickle.dumps(obj))
         connection = obj.IsConnected()
     print("3-way done!!!")
-    
-    
+
    
 
     while 1:
@@ -38,7 +35,7 @@ def main():
 
         # echo back
         data = input("Server >")
-        data = data.encode() 
+        data = data.encode()
         con.sendto(data, ip)
 
     con.close()
