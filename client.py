@@ -27,6 +27,9 @@ while connection != True:
         print("handshake done, you can send mssgs")
         time.sleep(1)
 time.sleep(1)
+
+#begin chatting
+
 while 1:
     message = input("> ")
     print('input',message)
@@ -36,7 +39,12 @@ while 1:
     try:
         # send the message
         msgpacket = Packet(0, 0, 0, message)
+        checkSum = hash(msgpacket)
+        print('Hash of new object:',  checkSum)
+        msgpacket.setChecksum(checkSum)
         data_string = pickle.dumps(msgpacket)
+        
+        
         socket.sendto(data_string, ("127.0.0.1", 9999))
         #socket.sendto(message, ("127.0.0.1", 9999))
 

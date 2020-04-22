@@ -34,6 +34,8 @@ while 1:
     print('Printing whole packet received from socket',data)
     #print("{}: {}".format(ip, data.decode(encoding="utf-8").strip()))
     print('After pickling ',data_variable)
+    print('Value of checksum in packet', data_variable.checksum)
+
     # echo back
     reply = input(">")
     reply = reply.encode() 
