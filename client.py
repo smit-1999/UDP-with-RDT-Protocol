@@ -1,6 +1,6 @@
 import socket
 import pickle,time 
-import packet
+from packet import Packet
 from twh import ThreeWayHandshake
 # create our udp socket
 try:
@@ -35,9 +35,9 @@ while 1:
 
     try:
         # send the message
-        msgpacket = packet(0, 0, 0, message)
+        msgpacket = Packet(0, 0, 0, message)
         data_string = pickle.dumps(msgpacket)
-        socket.sendto(data_string)
+        socket.sendto(data_string, ("127.0.0.1", 9999))
         #socket.sendto(message, ("127.0.0.1", 9999))
 
         # output the response (if any)
