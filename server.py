@@ -1,4 +1,4 @@
-import socket
+import socket,time
 
 # set up the socket using local address
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,12 +10,15 @@ status = ""
 while connection != True:
     data,ip = socket.recvfrom(1024)
     if(data.decode(encoding="utf-8").strip() == "A1"):
+        print("Obtained a client request,acknowledging connection")
         reply = "A2"
         reply=reply.encode()
         socket.sendto(reply,ip)
+        time.sleep(1)
     elif (data.decode(encoding="utf-8").strip() == "B1"):
         connection = True
-        print("handshake done, ready to receive mssgs")
+        print("Handshake done, ready to receive msgs")
+        time.sleep(1)
     
 
 while 1:
@@ -24,9 +27,9 @@ while 1:
     data, ip = socket.recvfrom(1024)
 
     # display
-    print("{}: {}".format(ip, data.decode(encoding="utf-8").strip()))
+    print("Client> "+"{}: {}".format(ip, data.decode(encoding="utf-8").strip()))
 
     # echo back
-    data = input("Server >")
+    data = input(">")
     data = data.encode() 
     socket.sendto(data, ip)

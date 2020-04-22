@@ -1,5 +1,5 @@
 import socket
-import pickle
+import pickle,time 
 from twh import ThreeWayHandshake
 # create our udp socket
 try:
@@ -10,17 +10,22 @@ except socket.error:
 
 connection = False
 while connection != True:
+    print("Initiating handshake request")
     msg = "A1"
     msg = msg.encode()
     socket.sendto(msg, ("127.0.0.1", 9999))
+    time.sleep(1)
     data,ip = socket.recvfrom(1024)
     if(data.decode(encoding="utf-8").strip() == "A2"):
+        print("Ack obtained from server")
         msg = "B1"
         msg=msg.encode()
+        time.sleep(1)
         socket.sendto(msg, ("127.0.0.1", 9999))
         connection = True
         print("handshake done, you can send mssgs")
-
+        time.sleep(1)
+time.sleep(1)
 while 1:
     message = input("> ")
     print('input',message)
@@ -34,7 +39,7 @@ while 1:
         # output the response (if any)
         data, ip = socket.recvfrom(1024)
 
-        print("{}: {}".format(ip, data.decode()))
+        print("Server> "+"{}: {}".format(ip, data.decode()))
 
     except socket.error:
         print("Error! {}".format(socket.error))
