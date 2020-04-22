@@ -1,5 +1,6 @@
-import socket,time
-
+import socket
+import packet
+import pickle,time
 # set up the socket using local address
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 socket.bind(("", 9999))
@@ -24,11 +25,14 @@ while connection != True:
 while 1:
 
     # get the data sent to us
-    data, ip = socket.recvfrom(1024)
-
+    #data, ip = socket.recvfrom(1024)
+    data = socket.recv(4096)
+    data_variable = pickle.loads(data)
     # display
     print("Client> "+"{}: {}".format(ip, data.decode(encoding="utf-8").strip()))
 
+    #print("{}: {}".format(ip, data.decode(encoding="utf-8").strip()))
+    print(data_variable)
     # echo back
     data = input(">")
     data = data.encode() 
