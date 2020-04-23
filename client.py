@@ -2,6 +2,7 @@ import socket
 import pickle,time 
 from packet import Packet
 from twh import ThreeWayHandshake
+import hashlib
 # create our udp socket
 try:
     socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,19 +40,19 @@ while 1:
     try:
         # send the message
         msgpacket = Packet(0, 0, 0, message)
-        checkSum = hash(msgpacket)
-        print('Hash of new object:',  checkSum)
-        msgpacket.setChecksum(checkSum)
+        print(msgpacket)        
         data_string = pickle.dumps(msgpacket)
-        
+        #print(data_string)
         
         socket.sendto(data_string, ("127.0.0.1", 9999))
-        #socket.sendto(message, ("127.0.0.1", 9999))
 
         # output the response (if any)
         data, ip = socket.recvfrom(1024)
-
-        print("Server> "+"{}: {}".format(ip, data.decode()))
+        recvd_Packet = pickle.loads(data)
+        print('Server ip : ',ip)
+        #print('Printing whole packet received from socket',data)
+        #print('After pickling ',recvd_Packet)
+        print(recvd_Packet.seq_num, recvd_Packet.payload,recvd_Packet.isAck,recvd_Packet.msg.decode("utf-8"))
 
     except socket.error:
         print("Error! {}".format(socket.error))

@@ -13,13 +13,4 @@ class Packet :
         self.isAck = isAck
         self.msg = msg
 
-    def __eq__(self, other):
-        return self.seq_num == other.seq_num and self.payload == other.payload  and self.isAck == other.isAck and self.msg == other.msg
 
-    def __hash__(self):
-        
-        return hash((self.seq_num, self.payload, self.isAck , self.msg))
-
-    def setChecksum(self,val):
-        self.checksum = val
-    
