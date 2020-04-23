@@ -32,7 +32,7 @@ time.sleep(1)
 #begin chatting
 
 while 1:
-    message = input("> ")
+    message = input(">")
     print('input',message)
     # encode the message
     message = message.encode()
