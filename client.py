@@ -19,19 +19,23 @@ server_seq = 0
 
 while connection != True:
     print("Initiating handshake request")
-    msg = "A1 seq:"+ str(seq_num)
-    msg = msg.encode()
-    socket.sendto(msg, ("127.0.0.1", 9999))
+    handshake_packet = {}
+    handshake_packet["payload"] = 'A1'
+    handshake_packet['seq'] = seq_num
+    socket.sendto(pickle.dumps(handshake_packet), (("127.0.0.1", 9999)))
     time.sleep(1)
+    
     data,ip = socket.recvfrom(1024)
-    if(data.decode(encoding="utf-8").strip()[:2] == "A2"):
-        print("Ack obtained from server", data)
-        server_seq = data.decode(encoding="utf-8").strip()[7:13]
-        print(server_seq)
-        msg = "B1"
-        msg=msg.encode()
+    recvd_packet = pickle.loads(data)
+    
+    if(recvd_packet['payload'] == "A2"):
+        
+        server_seq = recvd_packet['seq']
+        print("Ack obtained from server.Server seq:", server_seq)
         time.sleep(1)
-        socket.sendto(msg, ("127.0.0.1", 9999))
+        reply_packet = {}
+        reply_packet['payload'] = "B1"
+        socket.sendto(pickle.dumps(reply_packet), ("127.0.0.1", 9999))
         connection = True
         print("handshake done, you can send mssgs")
         senderSock = ip

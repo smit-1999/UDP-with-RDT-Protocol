@@ -17,17 +17,17 @@ client_seq = 0
 
 while connection != True:
     data,ip = socket.recvfrom(1024)
-    if(data.decode(encoding="utf-8").strip()[:2] == "A1"):
-        print("Obtained a client request,acknowledging connection")
-        print("Client ip:",ip, "Data:",data)
-        reply = "A2 seq:" + str(seq_num)
-        client_seq = data.decode(encoding="utf-8").strip()[7:13]
-        print(client_seq)
+    recvd_packet = pickle.loads(data)
+    if(recvd_packet['payload'] == "A1"):
+        print("Obtained a client request,acknowledging connection")        
+        client_seq = recvd_packet['seq']
+        print('Client seq no is:',client_seq,"\nClient ip:",ip)
         senderSock = ip
-        reply=reply.encode()
-        socket.sendto(reply,ip)
+        reply_packet = {}
+        reply_packet['payload'] = "A2"; reply_packet['seq'] = seq_num
+        socket.sendto(pickle.dumps(reply_packet),ip)
         time.sleep(1)
-    elif (data.decode(encoding="utf-8").strip() == "B1"):
+    elif (recvd_packet['payload'] == "B1"):
         connection = True
         print("Handshake done, ready to receive msgs")
         time.sleep(1)
