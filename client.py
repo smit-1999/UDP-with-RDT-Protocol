@@ -1,6 +1,6 @@
 import socket,pickle,time,hashlib,os,logging,random
 from packet import Packet
-from ClientThread import receivePackets, windowHandler, sendPackets
+from ClientThread import receivePackets, windowHandler, sendPackets, timerclass
 from twh import ThreeWayHandshake
 from threading import Thread
 
@@ -46,11 +46,11 @@ time.sleep(1)
 handler = windowHandler(socket, senderSock,seq_num,server_seq)
 pktReceiver =  receivePackets(socket, 0)
 pckSender = sendPackets(socket, senderSock)
-# time = timer()
+timeout = timerclass()
 pktReceiver.start()
 handler.start()
 pckSender.start()
-# time.start()
+#timeout.start()
 
 handler.join()
 pktReceiver.join()
