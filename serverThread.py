@@ -36,7 +36,6 @@ class receivePackets(Thread):
                 recvdMsg = recvd_Packet.msg.decode("utf-8") 
                 
                 #writeToFile(recvdMsg)
-
                 
                 ack_msg = {}
                 print('Sender seq no',self.sender_seq)
@@ -49,7 +48,7 @@ class receivePackets(Thread):
                 
                 
             else:
-                print('HI')
+                
                 ack_msg = {}
                 ack_msg['seq_num'] = self.sender_seq
                 ack_msg = pickle.dumps(ack_msg)

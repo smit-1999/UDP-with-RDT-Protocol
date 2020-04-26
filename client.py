@@ -1,6 +1,6 @@
 import socket,pickle,time,hashlib,os,logging,random
 from packet import Packet
-from ClientThread import receivePackets, sendAcks, sendPackets, timer
+from ClientThread import receivePackets, windowHandler, sendPackets
 from twh import ThreeWayHandshake
 from threading import Thread
 
@@ -43,16 +43,16 @@ while connection != True:
 time.sleep(1)
 
 #begin chatting
-ackSender = sendAcks(socket, senderSock)
+handler = windowHandler(socket, senderSock,seq_num,server_seq)
 pktReceiver =  receivePackets(socket, 0)
 pckSender = sendPackets(socket, senderSock)
-time = timer()
+# time = timer()
 pktReceiver.start()
-ackSender.start()
+handler.start()
 pckSender.start()
-time.start()
+# time.start()
 
-ackSender.join()
+handler.join()
 pktReceiver.join()
 # while 1:
 #     message = input(">")

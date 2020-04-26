@@ -36,17 +36,20 @@ class receivePackets(Thread):
             print('Received ack  message with sequence number:', recvd_seq_no)
         print('Thread exited succesfully')
 
-class sendAcks(Thread):
-    def __init__(self,receiver_socket,sender_socket):
+class windowHandler(Thread):
+    def __init__(self,receiver_socket,sender_socket,seqnum,server_seqnum):
         Thread.__init__(self)
         self.receiverSocket = receiver_socket
         self.senderSocket = sender_socket
+        self.my_seq_num = seqnum
+        self.server_seq_num = server_seqnum
         
     def run(self):
         while 1:
             reply = input(">")
             reply = reply.encode()
-            msgpacket = Packet(0, 0, 0, reply)
+            msgpacket = Packet(self.server_seq_num, 0, 0, reply)
+            self.server_seq_num+=1
             data_string = pickle.dumps(msgpacket) 
             queue.append(data_string)
             #self.receiverSocket.sendto(data_string,self.senderSocket)
@@ -71,8 +74,8 @@ class sendPackets(Thread):
                 print(send_data)
                 self.receiverSocket.sendto(send_data,self.senderSocket)
 
-class timer(Thread) :
-    while(1):
-        if((datetime.now() - time).total_seconds() > 1) :
-            sendAcks.retransmit()
-            time = datetime.now()
+# class timer(Thread) :
+#     while(1):
+#         if((datetime.now() - time).total_seconds() > 1) :
+#             windowHandler.retransmit()
+#             time = datetime.now()
