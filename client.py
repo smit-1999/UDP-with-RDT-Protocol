@@ -50,7 +50,7 @@ timeout = timerclass()
 pktReceiver.start()
 handler.start()
 pckSender.start()
-#timeout.start()
+timeout.start()
 
 handler.join()
 pktReceiver.join()
