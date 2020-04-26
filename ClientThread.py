@@ -1,6 +1,7 @@
 import socket
 import pickle,time
 from packet import Packet
+from datetime import datetime
 import os
 from threading import Thread
 import logging
@@ -10,6 +11,9 @@ logging.basicConfig(level=logging.DEBUG,
 log = logging.getLogger()
 
 queue = []
+time = datetime.now()
+
+
 
 class receivePackets(Thread):
     """
@@ -47,6 +51,13 @@ class sendAcks(Thread):
             queue.append(data_string)
             #self.receiverSocket.sendto(data_string,self.senderSocket)
 
+    def retransmit():
+        for i in range (min(3, len(queue))):
+            send_data = queue[i]
+            self.receiverSocket.sendto(send_data,self.senderSocket)
+            if(i == 0):
+                time = datetime.now()
+
 class sendPackets(Thread):
     def __init__(self,receiver_socket,sender_socket):
         Thread.__init__(self)
@@ -57,4 +68,11 @@ class sendPackets(Thread):
         while 1:
             while(len(queue)) :
                 send_data = queue.pop(0)
+                print(send_data)
                 self.receiverSocket.sendto(send_data,self.senderSocket)
+
+class timer(Thread) :
+    while(1):
+        if((datetime.now() - time).total_seconds() > 1) :
+            sendAcks.retransmit()
+            time = datetime.now()
