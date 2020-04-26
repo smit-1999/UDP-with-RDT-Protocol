@@ -1,12 +1,8 @@
-import socket
-import pickle,time 
+import socket,pickle,time,hashlib,os,logging,random
 from packet import Packet
 from ClientThread import receivePackets, sendAcks
 from twh import ThreeWayHandshake
-import hashlib
-import os
 from threading import Thread
-import logging
 
 # create our udp socket
 try:
@@ -17,15 +13,21 @@ except socket.error:
 
 connection = False
 senderSock = 0
+seq_num = random.randrange(100000,900000,50)
+print(seq_num)
+server_seq = 0
+
 while connection != True:
     print("Initiating handshake request")
-    msg = "A1"
+    msg = "A1 seq:"+ str(seq_num)
     msg = msg.encode()
     socket.sendto(msg, ("127.0.0.1", 9999))
     time.sleep(1)
     data,ip = socket.recvfrom(1024)
-    if(data.decode(encoding="utf-8").strip() == "A2"):
-        print("Ack obtained from server")
+    if(data.decode(encoding="utf-8").strip()[:2] == "A2"):
+        print("Ack obtained from server", data)
+        server_seq = data.decode(encoding="utf-8").strip()[7:13]
+        print(server_seq)
         msg = "B1"
         msg=msg.encode()
         time.sleep(1)

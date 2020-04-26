@@ -1,25 +1,28 @@
-import socket
-import pickle,time
+import socket, pickle,time,logging,random,os
 from packet import Packet
 from serverThread import receivePackets, sendAcks
-import os
 from threading import Thread
-import logging
 
 # set up the socket using local address
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 socket.bind(("", 9999))
-print(f"server started on localhost at port 9999")
-
+print(f"Server started on localhost at port 9999.")
 connection = False
 status = ""
 senderSock = 0
+
+seq_num = random.randrange(100000,900000,50)
+print(seq_num)
+client_seq = 0
+
 while connection != True:
     data,ip = socket.recvfrom(1024)
-    if(data.decode(encoding="utf-8").strip() == "A1"):
+    if(data.decode(encoding="utf-8").strip()[:2] == "A1"):
         print("Obtained a client request,acknowledging connection")
-        print("client ip:",ip)
-        reply = "A2"
+        print("Client ip:",ip, "Data:",data)
+        reply = "A2 seq:" + str(seq_num)
+        client_seq = data.decode(encoding="utf-8").strip()[7:13]
+        print(client_seq)
         senderSock = ip
         reply=reply.encode()
         socket.sendto(reply,ip)
