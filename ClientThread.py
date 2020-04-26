@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG,
 log = logging.getLogger()
 
 queue = []
-time = datetime.now()
+timer = datetime.now()
 
 
 
@@ -59,7 +59,7 @@ class windowHandler(Thread):
             send_data = queue[i]
             self.receiverSocket.sendto(send_data,self.senderSocket)
             if(i == 0):
-                time = datetime.now()
+                timer = datetime.now()
 
 class sendPackets(Thread):
     def __init__(self,receiver_socket,sender_socket):
@@ -74,8 +74,8 @@ class sendPackets(Thread):
                 print(send_data)
                 self.receiverSocket.sendto(send_data,self.senderSocket)
 
-# class timer(Thread) :
-#     while(1):
-#         if((datetime.now() - time).total_seconds() > 1) :
-#             windowHandler.retransmit()
-#             time = datetime.now()
+class timerclass(Thread) :
+    while(1):
+        if((datetime.now() - timer).total_seconds() > 1 ) :
+            #windowHandler.retransmit()
+            timer = datetime.now()
