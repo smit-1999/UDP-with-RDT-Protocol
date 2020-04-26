@@ -13,8 +13,8 @@ log = logging.getLogger()
 queue = []
 timer = datetime.now()
 
-
-
+expected_ack_no = 0
+received_seq_no = 0 
 class receivePackets(Thread):
     """
     This thread receives acks sent by the server.It listens on client socket for any incoming acks by the server.
@@ -33,6 +33,7 @@ class receivePackets(Thread):
             recvd_Packet = pickle.loads(data)
             print('Client ip: ',ip)
             recvd_seq_no = recvd_Packet['seq_num'] 
+            received_seq_no = recvd_seq_no
             print('Received ack  message with sequence number:', recvd_seq_no)
         print('Thread exited succesfully')
 
@@ -43,7 +44,7 @@ class windowHandler(Thread):
         self.senderSocket = sender_socket
         self.my_seq_num = seqnum
         self.server_seq_num = server_seqnum
-        
+        expected_ack_no = seqnum
     def run(self):
         while 1:
             reply = input(">")
@@ -69,6 +70,8 @@ class sendPackets(Thread):
     
     def run(self):
         while 1:
+            if(expected_ack_no == received_seq_no):
+                expected_ack_no+=1
             while(len(queue)) :
                 send_data = queue.pop(0)
                 print(send_data)
@@ -76,6 +79,8 @@ class sendPackets(Thread):
 
 class timerclass(Thread) :
     while(1):
-        if((datetime.now() - timer).total_seconds() > 1 ) :
+        if((datetime.now() - timer).total_seconds() > 0 ):
             #windowHandler.retransmit()
             timer = datetime.now()
+            print(timer)
+            break
