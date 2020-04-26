@@ -9,26 +9,52 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s RECEIVER [%(levelname)s] %(message)s',)
 log = logging.getLogger()
 
-queue = []
+expected_seq_num = 0
 
 class receivePackets(Thread):
-    def __init__(self,receiver_socket,msg,seqNo):
+    def __init__(self,receiver_socket,sender_socket,msg,seqNo,sender_seqno):
         Thread.__init__(self)
         self.msg = msg
-        self.seqNo = seqNo
-        self.receiverSocket = receiver_socket
+        self.my_seq_num = seqNo
+        self.mySocket = receiver_socket
+        self.senderSocket = sender_socket
+        self.sender_seq = sender_seqno
+        
     def run(self):
         log.info("Started to monitor packet receipt")
-        
+        expected_seq_num = self.my_seq_num
         while 1:
-            data,ip = self.receiverSocket.recvfrom(4096)
+            """
+            Listen to the socket port,if there's an incoming packet which matches the seq_num,pass it to the application layer
+            If not,send an ack msg having the seq_num of the last received in-order packet
+            """
+            data,ip = self.mySocket.recvfrom(4096)
             recvd_Packet = pickle.loads(data)
-            print('Client ip: ',ip)
-            recvdMsg = recvd_Packet.msg.decode("utf-8") 
-            print('Received message:', recvdMsg)
-            if(recvdMsg == "quit"):
-                print('Exiting receiver thread on server side')
-                break
+            print('Client ip: ',ip,"sent data : ", recvd_Packet.msg)
+            
+            if(recvd_Packet.seq_num == expected_seq_num):
+                recvdMsg = recvd_Packet.msg.decode("utf-8") 
+                
+                #writeToFile(recvdMsg)
+
+                
+                ack_msg = {}
+                print('Sender seq no',self.sender_seq)
+                ack_msg['seq_num'] = self.sender_seq
+                ack_msg = pickle.dumps(ack_msg)
+                self.mySocket.sendto(ack_msg,self.senderSocket)     #send Ack message
+                
+                expected_seq_num+=1                                 #Increment seq number 
+                self.sender_seq+=1                                  #increment seq number of ack packet
+                
+                
+            else:
+                print('HI')
+                ack_msg = {}
+                ack_msg['seq_num'] = self.sender_seq
+                ack_msg = pickle.dumps(ack_msg)
+                self.mySocket.sendto(ack_msg,self.senderSocket)
+                
         print('Thread exited succesfully')
 
 class sendAcks(Thread):

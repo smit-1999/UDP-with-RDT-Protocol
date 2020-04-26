@@ -12,23 +12,24 @@ log = logging.getLogger()
 queue = []
 
 class receivePackets(Thread):
-    def __init__(self,receiver_socket,msg,seqNo):
+    """
+    This thread receives acks sent by the server.It listens on client socket for any incoming acks by the server.
+    """
+
+    def __init__(self,receiver_socket,msg):
         Thread.__init__(self)
         self.msg = msg
-        self.seqNo = seqNo
-        self.receiverSocket = receiver_socket
+        self.mySocket = receiver_socket
+        
     def run(self):
         log.info("Started to monitor packet receipt")
         
         while 1:
-            data,ip = self.receiverSocket.recvfrom(4096)
+            data,ip = self.mySocket.recvfrom(4096)
             recvd_Packet = pickle.loads(data)
             print('Client ip: ',ip)
-            recvdMsg = recvd_Packet.msg.decode("utf-8") 
-            print('Received message:', recvdMsg)
-            if(recvdMsg == "quit"):
-                print('Exiting receiver thread on server side')
-                break
+            recvd_seq_no = recvd_Packet['seq_num'] 
+            print('Received ack  message with sequence number:', recvd_seq_no)
         print('Thread exited succesfully')
 
 class sendAcks(Thread):
@@ -36,6 +37,7 @@ class sendAcks(Thread):
         Thread.__init__(self)
         self.receiverSocket = receiver_socket
         self.senderSocket = sender_socket
+        
     def run(self):
         while 1:
             reply = input(">")
