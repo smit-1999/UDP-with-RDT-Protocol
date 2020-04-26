@@ -9,6 +9,8 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s RECEIVER [%(levelname)s] %(message)s',)
 log = logging.getLogger()
 
+queue = []
+
 class receivePackets(Thread):
     def __init__(self,receiver_socket,msg,seqNo):
         Thread.__init__(self)
@@ -40,4 +42,17 @@ class sendAcks(Thread):
             reply = reply.encode()
             msgpacket = Packet(0, 0, 0, reply)
             data_string = pickle.dumps(msgpacket) 
-            self.receiverSocket.sendto(data_string,self.senderSocket)
+            queue.append(data_string)
+            #self.receiverSocket.sendto(data_string,self.senderSocket)
+
+class sendPackets(Thread):
+    def __init__(self,receiver_socket,sender_socket):
+        Thread.__init__(self)
+        self.receiverSocket = receiver_socket
+        self.senderSocket = sender_socket
+    
+    def run(self):
+        while 1:
+            while(len(queue)) :
+                send_data = queue.pop(0)
+                self.receiverSocket.sendto(send_data,self.senderSocket)

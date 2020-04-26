@@ -1,6 +1,6 @@
 import socket, pickle,time,logging,random,os
 from packet import Packet
-from serverThread import receivePackets, sendAcks
+from serverThread import receivePackets, sendAcks, sendPackets
 from threading import Thread
 
 # set up the socket using local address
@@ -34,8 +34,10 @@ while connection != True:
 
 pktReceiver =  receivePackets(socket, 0, 0)
 ackSender = sendAcks(socket, senderSock)
+pckSender = sendPackets(socket, senderSock)
 pktReceiver.start()
 ackSender.start()
+pckSender.start()
 
 pktReceiver.join()
 ackSender.join()

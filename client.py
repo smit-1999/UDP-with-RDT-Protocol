@@ -1,6 +1,6 @@
 import socket,pickle,time,hashlib,os,logging,random
 from packet import Packet
-from ClientThread import receivePackets, sendAcks
+from ClientThread import receivePackets, sendAcks, sendPackets
 from twh import ThreeWayHandshake
 from threading import Thread
 
@@ -45,8 +45,10 @@ time.sleep(1)
 #begin chatting
 ackSender = sendAcks(socket, senderSock)
 pktReceiver =  receivePackets(socket, 0, 0)
+pckSender = sendPackets(socket, senderSock)
 pktReceiver.start()
 ackSender.start()
+pckSender.start()
 
 ackSender.join()
 pktReceiver.join()
