@@ -75,7 +75,9 @@ class sendPackets(Thread):
                 self.receiverSocket.sendto(send_data,self.senderSocket)
 
 class timerclass(Thread) :
-    while(1):
-        if((datetime.now() - timer).total_seconds() > 1 ) :
-            #windowHandler.retransmit()
-            timer = datetime.now()
+    def run(self):
+        timer = datetime.now()
+        while(1):
+            if((datetime.now() - timer).total_seconds() > 1 and len(queue)>0 ) :
+                windowHandler.retransmit()
+                timer = datetime.now()
