@@ -1,7 +1,35 @@
 import socket,os,pickle,time,random
 from packet import Packet
-from serverThread import HandshakeReceiver
+from serverHandler import Server
 
+def main():
+    myServer = Server()
+    myServer.generateSeq()
+
+    
+    while True:
+        data,ip = myServer.listen()
+        recvd_packet = pickle.loads(data)
+
+        print('\nreceived packet server seq no',recvd_packet.your_seq_num)
+        print('received packet client seq no',recvd_packet.seq_num)
+        print('Expected seq no',myServer.expected_seq_num)
+        
+        
+
+        if myServer.expected_seq_num == recvd_packet.your_seq_num:
+            #write to file
+            print('msg from client',recvd_packet.payload)
+            myServer.seq_num+=1
+            replyPacket = Packet(myServer.seq_num ,'ack',True,recvd_packet.seq_num + 1)
+            myServer.expected_seq_num = myServer.seq_num + 1
+            myServer.mySocket.sendto(pickle.dumps(replyPacket),ip)
+        elif myServer.expected_seq_num > recvd_packet.your_seq_num:
+            print('Duplicate detected')
+            replyPacket = Packet(myServer.seq_num ,'ack',True, recvd_packet.seq_num + 1)
+            myServer.mySocket.sendto(pickle.dumps(replyPacket),ip)
+
+main()
 
 seq_num = random.randrange(100000,900000,50)        #server sequence number
 print(seq_num)

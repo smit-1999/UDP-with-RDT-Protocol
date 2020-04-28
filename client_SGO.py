@@ -2,7 +2,7 @@ import socket,os,pickle,time,random
 import select
 from packet import Packet
 from datetime import datetime
-from ClientThread import HandshakeSender,HandshakeReceiver
+from UDPsocket import MySocket
 
 try:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
