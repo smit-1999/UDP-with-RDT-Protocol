@@ -1,4 +1,5 @@
 import socket,os,pickle,time,random
+import select
 from packet import Packet
 from datetime import datetime
 from ClientThread import HandshakeSender,HandshakeReceiver
@@ -49,14 +50,10 @@ while True:
 
     received = False
     while received == False:
-        data,ip = client_socket.recvfrom(1024)
-        recvd_packet = pickle.loads(data)
-        if data is None:
-            if datetime.now() - timer > 2:
-                print('Retransmit needed')
-                #retrnsmit needed
-                # client_socket.sendto(pickle.dumps(packet))
-        else:
+        client_socket.settimeout(2)
+        try : 
+            data,ip = client_socket.recvfrom(1024)
+            recvd_packet = pickle.loads(data)
             print('Not retransmitting.My seq no in packet:', recvd_packet.your_seq_num)
             print('received packet client seq no',recvd_packet.your_seq_num)
             print('received packet server seq no',recvd_packet.seq_num)
@@ -67,6 +64,24 @@ while True:
                 server_seq = recvd_packet.seq_num
                 seq_num+=1
                 expected_seq_no+=1
+       
+        except socket.timeout :
+            print("retransmit")
+            client_socket.sendto(pickle.dumps(packet))
+        
+        
+        
+        
+        
+        # if data is None:
+        #     print("oh")
+        #     if (datetime.now() - timer).total_seconds() > 2:
+        #         print('Retransmit needed')
+        #         #retrnsmit needed
+        #         # client_socket.sendto(pickle.dumps(packet))
+        
+        # else:
+        #     
 
 
 
