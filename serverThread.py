@@ -10,15 +10,18 @@ logging.basicConfig(level=logging.DEBUG,
 log = logging.getLogger()
 
 expected_seq_num = 0
-
+client_seq_init = 0
+senderSock = 0
 class receivePackets(Thread):
-    def __init__(self,receiver_socket,sender_socket,msg,seqNo,sender_seqno):
+    def __init__(self,receiver_socket,msg,seqNo):
         Thread.__init__(self)
+        global senderSock
+        global client_seq_init
         self.msg = msg
         self.my_seq_num = seqNo
         self.mySocket = receiver_socket
-        self.senderSocket = sender_socket
-        self.sender_seq = sender_seqno
+        self.senderSocket = senderSock
+        self.sender_seq = client_seq_init
         
     def run(self):
         log.info("Started to monitor packet receipt")
@@ -81,3 +84,45 @@ class sendPackets(Thread):
             while(len(queue)) :
                 send_data = queue.pop(0)
                 self.receiverSocket.sendto(send_data,self.senderSocket)
+
+
+class HandshakeSender(Thread):
+    def __init__(self,seq,sender_socket,mySocket):
+        Thread.__init__(self)
+        self.seq_num = seq
+        self.mySocket = mySocket
+        self.senderSocket = sender_socket
+        self.killed=False
+    def run(self):
+        while self.killed == False :
+            reply_packet={}
+            reply_packet['payload'] = "A2"
+            reply_packet['seq'] = self.seq_num
+            self.mySocket.sendto(pickle.dumps(reply_packet),self.senderSocket)
+            time.sleep(1)
+    def kill(self):
+        self.killed=True        
+class HandshakeReceiver(Thread):
+    def __init__(self,seq_num,mySocket):
+        Thread.__init__(self)
+        self.seq = seq_num
+        self.mySocket = mySocket
+        self.killed = False
+    def run(self):
+        while self.killed == False:
+            data,ip = self.mySocket.recvfrom(1024)
+            recvd_packet = pickle.loads(data)
+            handshake_send = HandshakeSender(self.seq,ip,self.mySocket)
+            global client_seq_init
+            global senderSock
+            if recvd_packet is None :
+                pass
+            elif recvd_packet["payload"] == "A1":                
+                client_seq_init = recvd_packet["seq"]
+                senderSock = ip
+                handshake_send.start()
+            elif recvd_packet["payload"] == "B1":
+                connection = True
+                handshake_send.kill()
+                print('handshake done,ready to receive msgs')
+                self.killed = True

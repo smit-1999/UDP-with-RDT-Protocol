@@ -17,11 +17,12 @@ seq_num = random.randrange(100000,900000,50)
 print(seq_num)
 server_seq = 0
 
+
 while connection != True:
     print("Initiating handshake request")
     handshake_packet = {}
     handshake_packet["payload"] = 'A1'
-    handshake_packet['seq'] = seq_num
+    handshake_packet["seq"] = seq_num
     socket.sendto(pickle.dumps(handshake_packet), (("127.0.0.1", 9999)))
     time.sleep(1)
     
@@ -46,11 +47,11 @@ time.sleep(1)
 handler = windowHandler(socket, senderSock,seq_num,server_seq)
 pktReceiver =  receivePackets(socket, 0)
 pckSender = sendPackets(socket, senderSock)
-timeout = timerclass()
+timeout = timerclass(socket,senderSock)
 pktReceiver.start()
 handler.start()
 pckSender.start()
-#timeout.start()
+timeout.start()
 
 handler.join()
 pktReceiver.join()
