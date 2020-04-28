@@ -47,16 +47,17 @@ while True:
     packet = Packet(seq_num,reply,'False',server_seq+1)
     client_socket.sendto(pickle.dumps(packet),server_socket)
     timer = datetime.now()
-
+    client_socket.settimeout(2)
     received = False
     while received == False:
-        client_socket.settimeout(2)
+        
+        data=""
+                
         try : 
             data,ip = client_socket.recvfrom(1024)
             recvd_packet = pickle.loads(data)
-            print('Not retransmitting.My seq no in packet:', recvd_packet.your_seq_num)
-            print('received packet client seq no',recvd_packet.your_seq_num)
-            print('received packet server seq no',recvd_packet.seq_num)
+            
+            print('Received a packet having my seq no',recvd_packet.your_seq_num,'server seq no:',recvd_packet.seq_num)
             print('Expected seq no',expected_seq_no)
             if expected_seq_no == recvd_packet.your_seq_num:
                 print('ack received from server')
@@ -67,7 +68,7 @@ while True:
        
         except socket.timeout :
             print("retransmit")
-            client_socket.sendto(pickle.dumps(packet))
+            client_socket.sendto(pickle.dumps(packet),(("127.0.0.1", 9999)))
         
         
         

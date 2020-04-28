@@ -41,7 +41,7 @@ while True:
             socket.sendto(pickle.dumps(replyPacket),ip)
         elif expected_seq_num > recvd_packet.your_seq_num:
             print('Duplicate detected')
-            replyPacket = Packet(seq_num ,'ack',True, expected_seq_num - 1)
+            replyPacket = Packet(seq_num ,'ack',True, recvd_packet.seq_num + 1)
             socket.sendto(pickle.dumps(replyPacket),ip)
             # replyPacket = Packet(,'dup',True,)
 
