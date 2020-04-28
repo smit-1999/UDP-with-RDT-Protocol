@@ -10,7 +10,7 @@ class Server():
         self.seq_num = 0        
         self.expected_seq_num = 0
         self.mySocket = self.createSocket()
-        print(self.mySocket)        
+        self.your_ip = 0      
         
     def createSocket(self):
         x = MySocket()
@@ -20,6 +20,9 @@ class Server():
 
     def getMySocket(self):
         return self.mySocket
+
+    def set_your_ip(self,ip):
+        self.your_ip = ip
 
     def getseq_num(self):
         return self.seq_num
@@ -42,3 +45,12 @@ class Server():
         data, ip = self.mySocket.recvfrom(1024)
         return data,ip
     
+    def handleDuplicates(self, recvd_packet, ip):
+        replyPacket = Packet(self.seq_num ,'ack',True, recvd_packet.seq_num + 1)
+        self.mySocket.sendto(pickle.dumps(replyPacket),ip)
+
+    def handleExpectedPacket(self, recvd_packet,ip):
+        self.seq_num+=1
+        replyPacket = Packet(self.seq_num ,'ack',True,recvd_packet.seq_num + 1)
+        self.expected_seq_num = self.seq_num + 1
+        self.mySocket.sendto(pickle.dumps(replyPacket),ip)
