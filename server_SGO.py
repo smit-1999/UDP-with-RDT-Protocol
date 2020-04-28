@@ -26,17 +26,24 @@ expected_seq_num = 0
 while True:
     data,ip = socket.recvfrom(1024)
     recvd_packet = pickle.loads(data)
-
+    print('\nreceived packet server seq no',recvd_packet.your_seq_num)
+    print('received packet client seq no',recvd_packet.seq_num)
+    print('Expected seq no',expected_seq_num)
     if recvd_packet is None:
         pass
     else:
         if expected_seq_num == recvd_packet.your_seq_num:
             print('msg from client',recvd_packet.payload,'My seq no in received packet:'
             ,recvd_packet.your_seq_num)
+            seq_num+=1
             replyPacket = Packet(seq_num ,'ack',True,recvd_packet.seq_num + 1)
             expected_seq_num = seq_num + 1
             socket.sendto(pickle.dumps(replyPacket),ip)
+        elif expected_seq_num > recvd_packet.your_seq_num:
+            print('Duplicate detected')
+            # replyPacket = Packet(,'dup',True,)
 
+            # socket.sendto(pickle.dumps(replyPacket),ip)
 
     # while connection == False:
     #     data,ip = socket.recvfrom(1024)
