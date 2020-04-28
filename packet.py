@@ -7,10 +7,10 @@ class Packet :
     isAck = 0
     msg = ""
 
-    def __init__(self, seq_num, payload, isAck, msg): 
-        self.seq_num = seq_num
+    def __init__(self, my_seq_num, payload, isAck, your_seq_num): 
+        self.seq_num = my_seq_num
         self.payload = payload
         self.isAck = isAck
-        self.msg = msg
+        self.your_seq_num = your_seq_num
 
 

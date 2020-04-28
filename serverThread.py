@@ -95,11 +95,12 @@ class HandshakeSender(Thread):
         self.killed=False
     def run(self):
         while self.killed == False :
+            print('Sending A2 to client')
             reply_packet={}
             reply_packet['payload'] = "A2"
             reply_packet['seq'] = self.seq_num
             self.mySocket.sendto(pickle.dumps(reply_packet),self.senderSocket)
-            time.sleep(1)
+            time.sleep(2)
     def kill(self):
         self.killed=True        
 class HandshakeReceiver(Thread):
@@ -118,11 +119,16 @@ class HandshakeReceiver(Thread):
             if recvd_packet is None :
                 pass
             elif recvd_packet["payload"] == "A1":                
+                print('Received a packet from client with ip',ip)
+                print('Client payload:',recvd_packet["payload"])
                 client_seq_init = recvd_packet["seq"]
                 senderSock = ip
                 handshake_send.start()
-            elif recvd_packet["payload"] == "B1":
-                connection = True
+                time.sleep(3)
                 handshake_send.kill()
-                print('handshake done,ready to receive msgs')
                 self.killed = True
+            # elif recvd_packet["payload"] == "B1":
+            #     connection = True
+            #     handshake_send.kill()
+            #     print('handshake done,ready to receive msgs')
+            #     self.killed = True

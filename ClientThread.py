@@ -128,3 +128,37 @@ class timerclass(Thread) :
             self.receiverSocket.sendto(send_data,self.senderSocket)
             if(i == 0):
                 timer = datetime.now()
+
+class HandshakeSender(Thread):
+    def __init__(self,mySocket,senderSock, client_seq,msg):
+        Thread.__init__(self)
+        self.mySocket = mySocket
+        self.serverSocket = senderSock
+        self.killed = False
+        self.client_seq = client_seq
+        self.msg  = msg
+    def run(self):
+        while self.killed == False:
+            handshake_packet = {}
+            handshake_packet["payload"] = self.msg
+            handshake_packet["seq"] = self.client_seq
+            print('Gpoing to send msg to server with payload',self.msg)
+            self.mySocket.sendto(pickle.dumps(handshake_packet), self.serverSocket)
+    def kill(self):
+        self.killed = True
+class HandshakeReceiver(Thread):
+    def __init__(self,mySocket,senderSock):
+        Thread.__init__(self)
+        self.mySocket = mySocket
+        self.serverSocket = senderSock
+        self.killed = False
+        self.client_seq = client_seq
+    def run(self):
+        while self.killed == False:
+            data,ip = mySocket.recvfrom(1024)
+            recvd_packet = pickle.loads(data)
+
+            if recvd_packet is None :
+                pass
+            elif recvd_packet['payload'] == "A2":
+                self.killed = True
