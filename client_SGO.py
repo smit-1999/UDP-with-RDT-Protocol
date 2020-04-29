@@ -9,12 +9,14 @@ class Client_SGO(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
+        total_time = datetime.now()
         myClient = Client()
         myClient.generateSeq()
         myClient.set_your_ip(("127.0.0.1", 9999))
         myClient.setTimeout(2)
         packetsSent = 0
         packetsReceived = 0
+        number_lines = 0
         while True:
             reply = input("Client>")
             packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
@@ -41,14 +43,23 @@ class Client_SGO(Thread):
                     packetsSent+=1 
             print('Packets sent:', packetsSent)
             print('Packets recvd:',packetsReceived)
+            total_time_str = str((datetime.now() - total_time).total_seconds())
             filename = 'results/packetloss_10%_client.txt'
             fields=[packetsSent, packetsReceived]
-            with open(filename, 'w') as csvfile:  
-                # creating a csv writer object  
-                csvwriter = csv.writer(csvfile)  
+            lines = open(filename, 'r').readlines()        
+            file_row = str(packetsReceived) + "," + str(packetsSent) + ","
+
+            out = open(filename, 'w+')
+            out.writelines(file_row)
+            out.writelines(total_time_str)
+            out.close()
+            # with open(filename, 'w') as csvfile:  
+            #     # creating a csv writer object  
+            #     csvwriter = csv.writer(csvfile)  
                     
-                # writing the fields  
-                csvwriter.writerow(fields)  
+            #     # writing the fields  
+            #     csvwriter.writerow(fields)
+            #     csvwriter.writerow(str(total_time_str)) 
               
 
 
