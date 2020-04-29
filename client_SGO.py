@@ -44,7 +44,7 @@ class Client_SGO(Thread):
             print('Packets sent:', packetsSent)
             print('Packets recvd:',packetsReceived)
             total_time_str = str((datetime.now() - total_time).total_seconds())
-            filename = 'results/packetloss_10%_client.txt'
+            filename = 'results/packetloss_90%_client.txt'
             fields=[packetsSent, packetsReceived]
             lines = open(filename, 'r').readlines()        
             file_row = str(packetsReceived) + "," + str(packetsSent) + ","
