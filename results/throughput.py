@@ -20,10 +20,10 @@ for i in range(2):
     li.append(int(list[i]))
 print (li)
 x = min(li[0], li[2])
-# print(type(x))
-# throughput = x / math.floor(time)
-# print(throughput)
-throughput = 1.2
+print(type(x))
+throughput = (x / (time[0]))
+print(throughput)
+#throughput = 1.2
 
 filename = 'graph.txt'      
 file_row = percentage + " ," + str(throughput) + "\n"
