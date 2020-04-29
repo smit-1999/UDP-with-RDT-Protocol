@@ -1,8 +1,9 @@
 from matplotlib import pyplot as plt
 
 
-filename = "graph.txt"
-file = open(filename, "r")
+filename = input('Please enter input file name')
+
+file = open(filename + ".txt", "r")
 li1 = []
 li2 = []
 str = file.readline()
@@ -21,4 +22,6 @@ plt.plot(li1, li2)
 plt.xlabel("Loss Percentage")
 plt.ylabel("Throughput")
 plt.title("Throughput VS Loss %")
+plt.draw()
+plt.savefig(filename+'.png')
 plt.show()
