@@ -11,19 +11,30 @@ def main():
         data,ip = myServer.listen()
         recvd_packet = pickle.loads(data)
         myServer.set_your_ip(ip)
-        print('\nreceived packet server seq no',recvd_packet.your_seq_num)
-        print('received packet client seq no',recvd_packet.seq_num)
-        print('Expected seq no',myServer.expected_seq_num)
+        print('Received a packet.Client ip : ', ip)
+        print('Server seq no',recvd_packet.your_seq_num)
+        print('Client seq no',recvd_packet.seq_num)
+        print('Expected seq no',myServer.dictionary[ip][2])
                       
 
-        if myServer.expected_seq_num == recvd_packet.your_seq_num:
+        if myServer.dictionary[ip][2] == recvd_packet.your_seq_num:
             #write to file
             print('Msg from client',recvd_packet.payload)
             myServer.handleExpectedPacket(recvd_packet, ip)
             
-        elif myServer.expected_seq_num > recvd_packet.your_seq_num:
-            print('Duplicate packet detected')
+        elif myServer.dictionary[ip][2] > recvd_packet.your_seq_num:
+            print('Duplicate packet detected.Packet payload : ', recvd_packet.payload)
             myServer.handleDuplicates(recvd_packet, ip)
+
+
+        # if myServer.expected_seq_num == recvd_packet.your_seq_num:
+        #     #write to file
+        #     print('Msg from client',recvd_packet.payload)
+        #     myServer.handleExpectedPacket(recvd_packet, ip)
+            
+        # elif myServer.expected_seq_num > recvd_packet.your_seq_num:
+        #     print('Duplicate packet detected')
+        #     myServer.handleDuplicates(recvd_packet, ip)
             
 
 main()

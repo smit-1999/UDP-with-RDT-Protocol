@@ -5,7 +5,7 @@ from packet import Packet
 #client handler : 
 class MySocket():
     def __init__(self):
-        print('Instantiating a socket')
+        print('Exiting socket constructor...')
     
     def create(self):
         try:

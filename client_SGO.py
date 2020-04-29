@@ -3,36 +3,67 @@ from packet import Packet
 from datetime import datetime
 from UDPsocket import MySocket
 from clientHandler import Client
+from threading import Thread
 
+class Client_SGO(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+    def run(self):
+        myClient = Client()
+        myClient.generateSeq()
+        myClient.set_your_ip(("127.0.0.1", 9999))
+        myClient.setTimeout(2)
+       
+        while True:
+            reply = input("Client>")
+            packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
+            myClient.sendPacket(packet)
+            received = False
+            while received == False:
+                try : 
+                    data,ip = myClient.mySocket.recvfrom(1024)
+                    recvd_packet = pickle.loads(data)
+                    
+                    print('Received a packet having my seq no',recvd_packet.your_seq_num,'server seq no:',recvd_packet.seq_num)
+                    print('Expected seq no',myClient.expected_seq_num)
+                    if myClient.expected_seq_num == recvd_packet.your_seq_num:
+                        print('Ack received from server')
+                        received = True
+                        myClient.handleAcks(recvd_packet)                    
+                except socket.timeout :
+                    print("Retransmitting")
+                    myClient.handleTimeout(packet) 
 
-
-def main():
-    myClient = Client()
-    myClient.generateSeq()
-    myClient.set_your_ip(("127.0.0.1", 9999))
-    myClient.setTimeout(2)
-    while True:
-        reply = input("Client>")
-        packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
-        myClient.sendPacket(packet)
-        received = False
-        while received == False:
-            try : 
-                data,ip = myClient.mySocket.recvfrom(1024)
-                recvd_packet = pickle.loads(data)
+clientThread = Client_SGO()
+clientThread.start()
+clientThread.join()
+# def main():
+#     myClient = Client()
+#     myClient.generateSeq()
+#     myClient.set_your_ip(("127.0.0.1", 9999))
+#     myClient.setTimeout(2)
+#     while True:
+#         reply = input("Client>")
+#         packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
+#         myClient.sendPacket(packet)
+#         received = False
+#         while received == False:
+#             try : 
+#                 data,ip = myClient.mySocket.recvfrom(1024)
+#                 recvd_packet = pickle.loads(data)
                 
-                print('Received a packet having my seq no',recvd_packet.your_seq_num,'server seq no:',recvd_packet.seq_num)
-                print('Expected seq no',myClient.expected_seq_num)
-                if myClient.expected_seq_num == recvd_packet.your_seq_num:
-                    print('Ack received from server')
-                    received = True
-                    myClient.handleAcks(recvd_packet)                    
-            except socket.timeout :
-                print("Retransmitting")
-                myClient.handleTimeout(packet)                
+#                 print('Received a packet having my seq no',recvd_packet.your_seq_num,'server seq no:',recvd_packet.seq_num)
+#                 print('Expected seq no',myClient.expected_seq_num)
+#                 if myClient.expected_seq_num == recvd_packet.your_seq_num:
+#                     print('Ack received from server')
+#                     received = True
+#                     myClient.handleAcks(recvd_packet)                    
+#             except socket.timeout :
+#                 print("Retransmitting")
+#                 myClient.handleTimeout(packet)                
                 
 
-main()
+# main()
 
 
 

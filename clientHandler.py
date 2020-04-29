@@ -6,12 +6,14 @@ from UDPsocket import MySocket
 
 class Client():
     def __init__(self):
-        print('Creating handler for client')
+        
         self.seq_num = 0        
         self.expected_seq_num = 0
         self.mySocket = self.createSocket()
+        self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.your_ip = 0
         self.your_seq_num = -1
+        print('Created handler for client')
     def createSocket(self):
         x = MySocket()
         x = x.create()
@@ -33,6 +35,7 @@ class Client():
         seq = random.randrange(100000,999999,50)
         self.seq_num = seq
         self.expected_seq_num = self.seq_num+1
+        print('Seq number start is :', seq)
         return seq
     
     def createPacket(self, msg, mySeq , yourSeq):

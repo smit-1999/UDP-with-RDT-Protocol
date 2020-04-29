@@ -11,7 +11,7 @@ class Server():
         self.expected_seq_num = 0
         self.mySocket = self.createSocket()
         self.your_ip = 0      
-        
+        self.dictionary = {}
     def createSocket(self):
         x = MySocket()
         newSocket = x.create()
@@ -43,14 +43,30 @@ class Server():
     
     def listen(self):
         data, ip = self.mySocket.recvfrom(1024)
+        if ip in self.dictionary.keys():
+            print('\nConnection already established.')
+        else:
+            print('\nNew client connected')
+            recvd_packet = pickle.loads(data)
+            seq_num = recvd_packet.seq_num
+            my_seq_num = self.generateSeq()
+            print('My sequence number for client ip',ip,'is:',my_seq_num)
+            self.dictionary[ip] = [seq_num, my_seq_num,0] #client seq,my seq,exp seq
         return data,ip
     
     def handleDuplicates(self, recvd_packet, ip):
-        replyPacket = Packet(self.seq_num ,'ack',True, recvd_packet.seq_num + 1)
+        replyPacket = Packet(self.dictionary[ip][1] ,'ack',True, recvd_packet.seq_num + 1)
         self.mySocket.sendto(pickle.dumps(replyPacket),ip)
 
+        # replyPacket = Packet(self.seq_num ,'ack',True, recvd_packet.seq_num + 1)
+        # self.mySocket.sendto(pickle.dumps(replyPacket),ip)
+
     def handleExpectedPacket(self, recvd_packet,ip):
-        self.seq_num+=1
-        replyPacket = Packet(self.seq_num ,'ack',True,recvd_packet.seq_num + 1)
-        self.expected_seq_num = self.seq_num + 1
+        self.dictionary[ip][1]+=1
+        replyPacket = Packet(self.dictionary[ip][1] ,'ack',True,recvd_packet.seq_num + 1)
+        self.dictionary[ip][2] = self.dictionary[ip][1] + 1
         self.mySocket.sendto(pickle.dumps(replyPacket),ip)
+        # self.seq_num+=1
+        # replyPacket = Packet(self.seq_num ,'ack',True,recvd_packet.seq_num + 1)
+        # self.expected_seq_num = self.seq_num + 1
+        # self.mySocket.sendto(pickle.dumps(replyPacket),ip)
