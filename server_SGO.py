@@ -91,5 +91,3 @@ client_socket = 0
 #             socket.sendto(pickle.dumps(replyPacket),ip)
 #             # replyPacket = Packet(,'dup',True,)
 #             # socket.sendto(pickle.dumps(replyPacket),ip)
-
-   
