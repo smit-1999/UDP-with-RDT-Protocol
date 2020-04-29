@@ -1,4 +1,4 @@
-import socket,os,pickle,time,random,select
+import socket,os,pickle,time,random,select,csv
 from packet import Packet
 from datetime import datetime
 from UDPsocket import MySocket
@@ -13,11 +13,13 @@ class Client_SGO(Thread):
         myClient.generateSeq()
         myClient.set_your_ip(("127.0.0.1", 9999))
         myClient.setTimeout(2)
-       
+        packetsSent = 0
+        packetsReceived = 0
         while True:
             reply = input("Client>")
             packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
             myClient.sendPacket(packet)
+            packetsSent+=1
             received = False
             while received == False:
                 try : 
@@ -27,16 +29,40 @@ class Client_SGO(Thread):
                     print('Received a packet having my seq no',recvd_packet.your_seq_num,'server seq no:',recvd_packet.seq_num)
                     print('Expected seq no',myClient.expected_seq_num)
                     if myClient.expected_seq_num == recvd_packet.your_seq_num:
+                        
                         print('Ack received from server')
+                        packetsReceived+=1
                         received = True
-                        myClient.handleAcks(recvd_packet)                    
+                        myClient.handleAcks(recvd_packet)
+
                 except socket.timeout :
                     print("Retransmitting")
-                    myClient.handleTimeout(packet) 
+                    myClient.handleTimeout(packet)
+                    packetsSent+=1 
+            print('Packets sent:', packetsSent)
+            print('Packets recvd:',packetsReceived)
+            filename = 'results/packetloss_10%_client.txt'
+            fields=[packetsSent, packetsReceived]
+            with open(filename, 'w') as csvfile:  
+                # creating a csv writer object  
+                csvwriter = csv.writer(csvfile)  
+                    
+                # writing the fields  
+                csvwriter.writerow(fields)  
+              
 
+
+timer = datetime.now()
 clientThread = Client_SGO()
 clientThread.start()
 clientThread.join()
+# time = (datetime.now()-timer).total_seconds
+# file_name = 'results/packetloss_10%.txt'
+# lines = open(file_name, 'r').readlines()        
+# lines[2] = 'Time ' + str(time) 
+# out = open(file_name, 'w+')
+# out.writelines(lines)
+# out.close()
 # def main():
 #     myClient = Client()
 #     myClient.generateSeq()

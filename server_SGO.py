@@ -1,4 +1,4 @@
-import socket,os,pickle,time,random
+import socket,os,pickle,time,random,csv
 from packet import Packet
 from serverHandler import Server
 
@@ -6,7 +6,8 @@ def main():
     myServer = Server()
     myServer.generateSeq()
 
-    
+    packetsReceived = 0
+    packetsSent = 0
     while True:
         data,ip = myServer.listen()
         recvd_packet = pickle.loads(data)
@@ -18,14 +19,30 @@ def main():
                       
 
         if myServer.dictionary[ip][2] == recvd_packet.your_seq_num:
-            #write to file
+            f = open("client_messages/"+str(ip[0])+ "_" + str(ip[1]) + ".txt","a+")
+            f.write(recvd_packet.payload + "\n")
+            f.close()            
+            packetsReceived += 1
             print('Msg from client',recvd_packet.payload)
             myServer.handleExpectedPacket(recvd_packet, ip)
+            packetsSent+=1
             
         elif myServer.dictionary[ip][2] > recvd_packet.your_seq_num:
             print('Duplicate packet detected.Packet payload : ', recvd_packet.payload)
             myServer.handleDuplicates(recvd_packet, ip)
+            packetsReceived += 1
+            packetsSent+=1
 
+        file_name = 'results/packetloss_10%.txt'
+        lines = open(file_name, 'r').readlines()        
+        lines[0] = str(packetsReceived) + "," + str(packetsSent) 
+
+        out = open(file_name, 'w+')
+        out.writelines(lines)
+        out.close()
+        #data[0] = data[0][5] + str(packetsReceived)
+        #f.write(data)
+        
 
         # if myServer.expected_seq_num == recvd_packet.your_seq_num:
         #     #write to file
