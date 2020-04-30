@@ -33,7 +33,7 @@ def main():
             packetsReceived += 1
             packetsSent+=1
 
-        file_name = 'results/packetloss_90%.txt'
+        file_name = 'results/delay_situation/delay_3000ms.txt'
         lines = open(file_name, 'r').readlines()        
         lines[0] = str(packetsReceived) + "," + str(packetsSent) 
 

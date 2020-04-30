@@ -19,9 +19,9 @@ while(len(str)) :
 # print(li2)
 
 plt.plot(li1, li2)
-plt.xlabel("Loss Percentage")
+plt.xlabel("Delay in ms")
 plt.ylabel("Throughput")
-plt.title("Throughput VS Loss %")
+plt.title("Throughput VS Delay %")
 plt.draw()
 plt.savefig(filename+'.png')
 plt.show()

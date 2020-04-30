@@ -1,11 +1,11 @@
 import re
 import math
 
-loss_percentage = input('Please enter packet loss percentage')
+delay = input('Please enter packet delay in ms')
 
-percentage = loss_percentage
-filename1 = "packetloss_"+loss_percentage+".txt"
-filename2 = "packetloss_"+loss_percentage+"_client.txt"
+percentage = delay
+filename1 = "delay_situation/delay_"+delay+"ms.txt"
+filename2 = "delay_situation/delay_"+delay+"ms_client.txt"
 file1 = open(filename1,"r") 
 file2 = open(filename2,"r") 
 f1 = file1.read()
