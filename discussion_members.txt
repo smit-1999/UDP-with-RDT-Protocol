@@ -1,0 +1,6 @@
+THis assignment was discussed by our team with:
+1)Nisarg Kotak
+2)Yedhu Tilak
+3)Jai Jain
+
+Discussions about what toy application they are using, and which protocol are they following were done.Our application is almost similar to Nisarg Kotak's application,but we have not referred their code.Only the app functionalities are the same.Moreover,they have done it in Java,whereas we have done it in python.Therefore,plagiarism in any form is avoided amongst us.

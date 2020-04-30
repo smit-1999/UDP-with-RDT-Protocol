@@ -8,11 +8,12 @@ def main():
 
     packetsReceived = 0
     packetsSent = 0
+    print('Listening on socket port 9999')
     while True:
         data,ip = myServer.listen()
         recvd_packet = pickle.loads(data)
         myServer.set_your_ip(ip)
-        print('Received a packet.Client ip : ', ip)
+        print('\n------------------------------------------------------------\nReceived a packet.Client ip : ', ip)
         print('Server seq no',recvd_packet.your_seq_num)
         print('Client seq no',recvd_packet.seq_num)
         print('Expected seq no',myServer.dictionary[ip][2])

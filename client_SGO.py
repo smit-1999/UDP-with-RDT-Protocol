@@ -18,7 +18,7 @@ class Client_SGO(Thread):
         packetsReceived = 0
         number_lines = 0
         while True:
-            reply = input("Client>")
+            reply = input("\n------------------------------------------------------------\nClient>")
             packet = myClient.createPacket(reply, myClient.getseq_num(), myClient.your_seq_num+1)
             myClient.sendPacket(packet)
             packetsSent+=1
@@ -38,7 +38,7 @@ class Client_SGO(Thread):
                         myClient.handleAcks(recvd_packet)
 
                 except socket.timeout :
-                    print("Retransmitting")
+                    print("Retransmitting message")
                     myClient.handleTimeout(packet)
                     packetsSent+=1 
             print('Packets sent:', packetsSent)

@@ -6,9 +6,9 @@ This assignment was done by
 
 1)Smit Shah : 2017A7PS0080H
 2)Shikhar Dhawale : 2017A7PS0049H
-3)Anish Walia
-4)Anish Dey
-5)Aniruddh Gupta
+3)Anish Walia : 2017A7PS0035H
+4)Anish Dey : 2017A7PS0220H
+5)Aniruddh Gupta : 2017A7PS0149H
 
 The application consists of a server and client.The client sends message to a client,which the server writes to a file.Multiple clients can send message to the server.
 
