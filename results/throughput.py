@@ -1,11 +1,11 @@
 import re
 import math
 
-delay = input('Please enter packet delay in ms')
+corruptness = input('Please enter packet corruption in %: ')
 
-percentage = delay
-filename1 = "delay_situation/delay_"+delay+"ms.txt"
-filename2 = "delay_situation/delay_"+delay+"ms_client.txt"
+percentage = corruptness
+filename1 = "packet_corruption/corrupt_"+corruptness+"%.txt"
+filename2 = "packet_corruption/corrupt_"+corruptness+"%_client.txt"
 file1 = open(filename1,"r") 
 file2 = open(filename2,"r") 
 f1 = file1.read()

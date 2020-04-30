@@ -19,9 +19,9 @@ while(len(str)) :
 # print(li2)
 
 plt.plot(li1, li2)
-plt.xlabel("Delay in ms")
+plt.xlabel("Corruption in %")
 plt.ylabel("Throughput")
-plt.title("Throughput VS Delay %")
+plt.title("Throughput VS Corruption %")
 plt.draw()
 plt.savefig(filename+'.png')
 plt.show()
